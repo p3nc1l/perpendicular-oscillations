@@ -7,6 +7,7 @@ import Rezges from "./scripts/Rezges.ts";
 
 const canvasWidth = 500;
 const canvasHeight = canvasWidth;
+const ppm = canvasWidth;
 
 const theme = createTheme({
     colorSchemes: {
@@ -23,6 +24,8 @@ export default function App() {
     const [faz2, setFaz2] = useState(0);
 
     const animationRef = useRef(0);
+    const canvasRef = useRef(null);
+    const timestampRef = useRef(null);
 
     const xRezges = new Rezges(ampl1, frekv1, faz1);
     const yRezges = new Rezges(ampl2, frekv2, faz2);
@@ -30,6 +33,25 @@ export default function App() {
     const startTimestamp = Date.now();
 
     function Render() {
+        if (canvasRef.current == null) return;
+        if (timestampRef.current == null) return;
+
+        const pillanat = (Date.now() - startTimestamp) / 1000;
+        const pillanatElement = timestampRef.current as HTMLElement;
+        pillanatElement.innerHTML = `t = ${Math.round(pillanat * 10) / 10}s`;
+
+        const canvas = canvasRef.current as HTMLCanvasElement;
+        const ctx = canvas.getContext("2d");
+
+        if (ctx == null) return;
+
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        ctx.beginPath();
+        ctx.arc(canvasWidth / 2 + xRezges.ertek(pillanat) * ppm, canvasHeight / 2 + yRezges.ertek(pillanat) * ppm, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
         animationRef.current =  requestAnimationFrame(Render);
     }
 
@@ -39,7 +61,7 @@ export default function App() {
     return (
         <ThemeProvider theme={theme}>
             <div className="flex justify-center items-center w-screen h-screen gap-10">
-                <div className={`w-150 max-w-2/5 relative aspect-${canvasWidth}/${canvasHeight}`}>
+                <div className={`flex flex-col items-center justify-center w-150 max-w-2/5 relative aspect-${canvasWidth}/${canvasHeight}`}>
                     <svg className={`w-full h-full`} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
                         <line className={"h-full stroke-white stroke-2"} x1={canvasWidth * 0.05} y1={canvasHeight * 0.01} x2={canvasWidth * 0.05} y2={canvasHeight * 0.95} />
                         <line className={"h-full stroke-white stroke-2"} x1={canvasWidth * 0.04} y1={canvasHeight * 0.02} x2={canvasWidth * 0.05} y2={canvasHeight * 0.01} />
@@ -51,7 +73,8 @@ export default function App() {
                         <text x={canvasWidth * 0.98} y={canvasHeight * 0.98} className={"fill-white text-xs"}>x</text>
                         <text x={canvasWidth * 0.02} y={canvasHeight * 0.02} className={"fill-white text-xs"}>y</text>
                     </svg>
-                    <canvas className="w-19/20 absolute top-0 right-0" width={canvasWidth} height={canvasHeight} />
+                    <canvas ref={canvasRef} className="w-19/20 absolute top-0 right-0" width={canvasWidth} height={canvasHeight} />
+                    <Typography ref={timestampRef}>t = 0s</Typography>
                 </div>
                 <div className={`flex flex-col justify-center gap-2 w-1/7`}>
                     <Typography variant={"h5"} component={"h2"}>Vízszintes rezgés</Typography>
