@@ -8,7 +8,7 @@ export default function TulajdonsagSlider({ state, setState, label, measurement,
         <>
             <Typography>{label}</Typography>
             <div className={`flex flex-row items-center gap-2`}>
-                <Slider value={state} min={min} max={max} step={(max - min) / 10} onChange={(_, value) => setState(value as number)} />
+                <Slider value={state} min={min} max={max} step={(max - min) / 20} onChange={(_, value) => setState(value as number)} />
                 <TextField className={"w-35"} disabled size={"small"} slotProps={{ input: { endAdornment: <InputAdornment position={"end"}>{measurement}</InputAdornment> } }} value={state} />
             </div>
         </>

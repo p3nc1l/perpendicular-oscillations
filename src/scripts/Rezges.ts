@@ -1,4 +1,4 @@
-export default class Rezges {
+export class Rezges {
     public amplitudo: number;
     public frekvencia: number;
     public kezdoFazis: number;
