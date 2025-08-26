@@ -103,13 +103,14 @@ export default function App() {
                 </div>
                 <div className={`flex flex-col justify-center gap-2 w-1/4`}>
                     <Typography variant={"h5"} component={"h2"}>Vízszintes rezgés</Typography>
-                    <TulajdonsagSlider state={ampl1} setState={setAmpl1} label={"Amplitudo"} measurement={"m"} min={0} max={0.4} />
+                    <TulajdonsagSlider state={ampl1} setState={setAmpl1} label={"Amplitudó"} measurement={"m"} min={0} max={0.4} />
                     <TulajdonsagSlider state={frekv1} setState={setFrekv1} label={"Frekvencia"} measurement={"Hz"} min={0.2} max={2.2} />
-                    <TulajdonsagSlider state={faz1} setState={setFaz1} label={"Kezdo fazis"} measurement={"π"} min={0} max={2} />
+                    <TulajdonsagSlider state={faz1} setState={setFaz1} label={"Kezdő fázis"} measurement={"π"} min={0} max={2} />
                     <Divider />
-                    <TulajdonsagSlider state={ampl2} setState={setAmpl2} label={"Amplitudo"} measurement={"m"} min={0} max={0.4} />
+                    <Typography variant={"h5"} component={"h2"}>Függőleges rezgés</Typography>
+                    <TulajdonsagSlider state={ampl2} setState={setAmpl2} label={"Amplitudó"} measurement={"m"} min={0} max={0.4} />
                     <TulajdonsagSlider state={frekv2} setState={setFrekv2} label={"Frekvencia"} measurement={"Hz"} min={0.2} max={2.2} />
-                    <TulajdonsagSlider state={faz2} setState={setFaz2} label={"Kezdo fazis"} measurement={"π"} min={0} max={2} />
+                    <TulajdonsagSlider state={faz2} setState={setFaz2} label={"Kezdő fázis"} measurement={"π"} min={0} max={2} />
                 </div>
             </div>
         </ThemeProvider>
