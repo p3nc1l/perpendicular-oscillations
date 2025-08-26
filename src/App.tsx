@@ -1,9 +1,10 @@
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import TulajdonsagSlider from "./components/TulajdonsagSlider.tsx";
+import ParameterSlider from "./components/ParameterSlider.tsx";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useState, useRef } from "react";
-import { Rezges } from "./scripts/Rezges.ts";
+import { Oscillation } from "./scripts/Oscillation.ts";
+import Dictionary from "./scripts/Dictionary.ts";
 
 const canvasWidth = 500;
 const canvasHeight = canvasWidth;
@@ -15,43 +16,45 @@ const theme = createTheme({
     },
 });
 
-export default function App() {
-    const [ampl1, setAmpl1] = useState(0.2);
-    const [frekv1, setFrekv1] = useState(1);
-    const [faz1, setFaz1] = useState(0);
-    const [ampl2, setAmpl2] = useState(0.2);
-    const [frekv2, setFrekv2] = useState(1);
-    const [faz2, setFaz2] = useState(0);
+export default function App(props: { lang?: "en" | "hu" }) {
+    const [amplitude1, setAmplitude1] = useState(0.2);
+    const [frequency1, setFrequency1] = useState(1);
+    const [phase1, setPhase1] = useState(0);
+    const [amplitude2, setAmplitude2] = useState(0.2);
+    const [frequency2, setFrequency2] = useState(1);
+    const [phase2, setPhase2] = useState(0);
 
     const animationRef = useRef(0);
     const canvasRef = useRef(null);
     const timestampRef = useRef(null);
 
-    const xRezges = new Rezges(ampl1, frekv1, faz1);
-    const yRezges = new Rezges(ampl2, frekv2, faz2);
+    const xOscillation = new Oscillation(amplitude1, frequency1, phase1);
+    const yOscillation = new Oscillation(amplitude2, frequency2, phase2);
 
-    const pontok: { x: number, y: number}[] = [];
+    const points: { x: number, y: number}[] = [];
 
     const startTimestamp = Date.now();
     let lastPont = startTimestamp;
+
+    const lang = props.lang || "en";
 
     function Render() {
         if (canvasRef.current == null) return;
         if (timestampRef.current == null) return;
 
-        const pillanat = (Date.now() - startTimestamp) / 1000;
-        const pillanatElement = timestampRef.current as HTMLElement;
-        pillanatElement.innerHTML = `t = ${Math.round(pillanat * 10) / 10}s`;
+        const timestamp = (Date.now() - startTimestamp) / 1000;
+        const timestampElement = timestampRef.current as HTMLElement;
+        timestampElement.innerHTML = `t = ${Math.round(timestamp * 10) / 10}s`;
 
         const canvas = canvasRef.current as HTMLCanvasElement;
         const ctx = canvas.getContext("2d");
 
         if (ctx == null) return;
 
-        if (pontok.length < 350 && Date.now() - lastPont > 25) {
-            pontok.push({
-                x: canvasWidth / 2 + xRezges.ertek(pillanat) * ppm,
-                y: canvasHeight / 2 + yRezges.ertek(pillanat) * ppm
+        if (points.length < 350 && Date.now() - lastPont > 25) {
+            points.push({
+                x: canvasWidth / 2 + xOscillation.value(timestamp) * ppm,
+                y: canvasHeight / 2 + yOscillation.value(timestamp) * ppm
             });
             lastPont = Date.now();
         }
@@ -60,14 +63,14 @@ export default function App() {
 
         ctx.beginPath();
         ctx.strokeStyle = "oklch(0.704 0.191 22.216)";
-        for (let i = 1; i < pontok.length; i++) {
-            ctx.moveTo(pontok[i - 1].x, pontok[i - 1].y);
-            ctx.lineTo(pontok[i].x, pontok[i].y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.moveTo(points[i - 1].x, points[i - 1].y);
+            ctx.lineTo(points[i].x, points[i].y);
             ctx.stroke();
         }
 
         ctx.beginPath();
-        ctx.arc(canvasWidth / 2 + xRezges.ertek(pillanat) * ppm, canvasHeight / 2 + yRezges.ertek(pillanat) * ppm, 5, 0, 2 * Math.PI);
+        ctx.arc(canvasWidth / 2 + xOscillation.value(timestamp) * ppm, canvasHeight / 2 + yOscillation.value(timestamp) * ppm, 5, 0, 2 * Math.PI);
         ctx.fillStyle = "white";
         ctx.fill();
 
@@ -102,15 +105,15 @@ export default function App() {
                     <Typography ref={timestampRef}>t = 0s</Typography>
                 </div>
                 <div className={`flex flex-col justify-center gap-2 w-1/4`}>
-                    <Typography variant={"h5"} component={"h2"}>Vízszintes rezgés</Typography>
-                    <TulajdonsagSlider state={ampl1} setState={setAmpl1} label={"Amplitudó"} measurement={"m"} min={0} max={0.4} />
-                    <TulajdonsagSlider state={frekv1} setState={setFrekv1} label={"Frekvencia"} measurement={"Hz"} min={0.2} max={2.2} />
-                    <TulajdonsagSlider state={faz1} setState={setFaz1} label={"Kezdő fázis"} measurement={"π"} min={0} max={2} />
+                    <Typography variant={"h5"} component={"h2"}>{Dictionary.get("horizontal oscillation")?.get(lang)}</Typography>
+                    <ParameterSlider state={amplitude1} setState={setAmplitude1} label={Dictionary.get("amplitude")?.get(lang) || ""} measurement={"m"} min={0} max={0.4} />
+                    <ParameterSlider state={frequency1} setState={setFrequency1} label={Dictionary.get("frequency")?.get(lang) || ""} measurement={"Hz"} min={0.2} max={2.2} />
+                    <ParameterSlider state={phase1} setState={setPhase1} label={Dictionary.get("initial phase")?.get(lang) || ""} measurement={"π"} min={0} max={2} />
                     <Divider />
-                    <Typography variant={"h5"} component={"h2"}>Függőleges rezgés</Typography>
-                    <TulajdonsagSlider state={ampl2} setState={setAmpl2} label={"Amplitudó"} measurement={"m"} min={0} max={0.4} />
-                    <TulajdonsagSlider state={frekv2} setState={setFrekv2} label={"Frekvencia"} measurement={"Hz"} min={0.2} max={2.2} />
-                    <TulajdonsagSlider state={faz2} setState={setFaz2} label={"Kezdő fázis"} measurement={"π"} min={0} max={2} />
+                    <Typography variant={"h5"} component={"h2"}>{Dictionary.get("vertical oscillation")?.get(lang)}</Typography>
+                    <ParameterSlider state={amplitude2} setState={setAmplitude2} label={Dictionary.get("amplitude")?.get(lang) || ""} measurement={"m"} min={0} max={0.4} />
+                    <ParameterSlider state={frequency2} setState={setFrequency2} label={Dictionary.get("frequency")?.get(lang) || ""} measurement={"Hz"} min={0.2} max={2.2} />
+                    <ParameterSlider state={phase2} setState={setPhase2} label={Dictionary.get("initial phase")?.get(lang) || ""} measurement={"π"} min={0} max={2} />
                 </div>
             </div>
         </ThemeProvider>

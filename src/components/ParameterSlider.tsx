@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 
-export default function TulajdonsagSlider({ state, setState, label, measurement, max, min }: { state: number, setState: (state: number) => void; label: string, measurement: string, max: number, min: number }) {
+export default function ParameterSlider({ state, setState, label, measurement, max, min }: { state: number, setState: (state: number) => void; label: string, measurement: string, max: number, min: number }) {
     return (
         <>
             <Typography>{label}</Typography>
