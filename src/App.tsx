@@ -2,9 +2,10 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import ParameterSlider from "./components/ParameterSlider.tsx";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Oscillation } from "./scripts/Oscillation.ts";
 import Dictionary from "./scripts/Dictionary.ts";
+import { useNavigate } from "react-router";
 
 const canvasWidth = 500;
 const canvasHeight = canvasWidth;
@@ -35,6 +36,11 @@ export default function App(props: { lang?: "en" | "hu" }) {
 
     const startTimestamp = Date.now();
     let lastPont = startTimestamp;
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (props.lang == undefined) navigate("en");
+    }, [navigate, props.lang])
 
     const lang = props.lang || "en";
 
