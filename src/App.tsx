@@ -43,6 +43,7 @@ export default function App(props: { lang?: "en" | "hu" }) {
     }, [navigate, props.lang])
 
     const lang = props.lang || "en";
+    document.title = Dictionary.get("title")?.get(lang) || "";
 
     function Render() {
         if (canvasRef.current == null) return;

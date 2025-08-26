@@ -18,6 +18,10 @@ const Dictionary = new Map([
   ["vertical oscillation", new Map([
     ["en", "Vertical oscillation"],
     ["hu", "Függőleges rezgés"]
+  ])],
+  ["title", new Map([
+    ["en", "Perpendicular oscillations"],
+    ["hu", "Merőleges rezgések"]
   ])]
 ])
 
